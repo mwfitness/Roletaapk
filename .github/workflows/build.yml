@@ -36,8 +36,12 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Configurar Android SDK
-        uses: android-actions/setup-android@v3
+      # Os servidores do GitHub já trazem o Android SDK (ANDROID_HOME); só aceitamos as licenças.
+      - name: Preparar Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          ls "$ANDROID_HOME/platforms" || true
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
 
       - name: Configurar Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -58,3 +62,4 @@ jobs:
           name: TSGames-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
+
